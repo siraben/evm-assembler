@@ -1,4 +1,4 @@
-# ActorForth
+# Assembler for the EVM
 
 ## Installation requirements
 - Virtualenv
