@@ -9,7 +9,7 @@ sload
 not
 (jumpi write_store)
 ;; Already in store, push 10 to indicate so.
-10
+;; 10
 stop
 (label write_store)
 ;; Get the value, key

@@ -59,13 +59,17 @@ def extract_stack(vm):
         )
     )
 
+def extract_storage(vm):
+    print(vm.state.get_storage(MOCK_ADDRESS, 54))
+    return [vm.state.get_storage(MOCK_ADDRESS, i) for i in range(0,10000)]
 
 if len(sys.argv) == 2:
     with open(sys.argv[1], "r") as f:
         bytecode = assemble_prog(parse_sexp(f.read()))
         vm2 = run_bytecode(bytes(bytecode))
+        storage = extract_storage(vm2)
         print(
-            "Filename: {}\nContract size: {} bytes\nStack: {}".format(
+            "Filename: {}\nContract size: {} bytes\nStack: {}\n".format(
                 sys.argv[1], len(bytecode), extract_stack(vm2)
             )
         )
@@ -75,6 +79,9 @@ if len(sys.argv) == 2:
             
         with open(sys.argv[1] + ".vm", "wb") as f:
             f.write(bytes(bytecode))
+
+        with open(sys.argv[1] + ".ss", "wb") as f:
+            f.write(bytes(storage))
 
         import ipdb; ipdb.set_trace()
 else:
