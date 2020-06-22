@@ -42,8 +42,8 @@ def run_bytecode(code):
         gas=100000000,
         gas_price=1,
         to=MOCK_ADDRESS,
-        value=0,
-        data=b"",
+        value=123,
+        data=bytes([54] + [0] * 31 + [210] + [0] * 31),
         code=code,
         sender=MOCK_ADDRESS,
     )
@@ -63,18 +63,19 @@ def extract_stack(vm):
 if len(sys.argv) == 2:
     with open(sys.argv[1], "r") as f:
         bytecode = assemble_prog(parse_sexp(f.read()))
-        vm = run_bytecode(bytes(bytecode))
+        vm2 = run_bytecode(bytes(bytecode))
         print(
             "Filename: {}\nContract size: {} bytes\nStack: {}".format(
-                sys.argv[1], len(bytecode), extract_stack(vm)
+                sys.argv[1], len(bytecode), extract_stack(vm2)
             )
         )
         with open(sys.argv[1] + ".mem", "wb") as f:
-            f.write(bytes(vm.memory_read(0, 10000)))
+            f.write(bytes(vm2.memory_read(0, 10000)))
             f.flush()
             
         with open(sys.argv[1] + ".vm", "wb") as f:
             f.write(bytes(bytecode))
-            
+
+        import ipdb; ipdb.set_trace()
 else:
     print("python main.py <assembly file>")
