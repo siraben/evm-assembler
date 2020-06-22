@@ -14,7 +14,6 @@ stop
 calldataload
 sload
 not
-9
 (jumpi foo)
 stop
 (label foo)
