@@ -88,14 +88,17 @@ if len(sys.argv) == 2:
         with open(sys.argv[1] + ".ss", "wb") as f:
             f.write(bytes(storage))
 
+        # Stuff to connect to a local node
         w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
-
         with open("password.txt", "r") as f:
             pwd = f.read().replace('\n', '')
             w3.geth.personal.unlock_account(SENDER, pwd, 3600)
             w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
-        tx_hash = w3.eth.sendTransaction({'to': "0x0000000000000000000000000000000000000000", 'from': SENDER, 'value': 123, 'data': bytes(bytecode)})
+        tx_hash = w3.eth.sendTransaction({'from': SENDER, 'value': 0, 'data': bytes(bytecode)})
+        receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+        # Address of the deployed contract:
+        # receipt['contractAddress']
 
         import ipdb; ipdb.set_trace()
 else:
