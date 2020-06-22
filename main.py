@@ -4,8 +4,12 @@ from eth.db.atomic import AtomicDB
 from eth_utils import to_wei, encode_hex
 from assembler import assemble_prog
 from sexp import parse_sexp
+from web3 import Web3
+from web3.middleware import geth_poa_middleware
 import sys
 
+
+SENDER = "0x0712fa982f9c9cCd74aA698eF03f5Bda837BC81f"
 MOCK_ADDRESS = constants.ZERO_ADDRESS
 DEFAULT_INITIAL_BALANCE = to_wei(1, "ether")
 
@@ -34,6 +38,7 @@ GENESIS_STATE = {
 chain = MainnetChain.from_genesis(AtomicDB(), GENESIS_PARAMS, GENESIS_STATE)
 
 vm = chain.get_vm()
+
 
 
 def run_bytecode(code):
@@ -82,6 +87,15 @@ if len(sys.argv) == 2:
 
         with open(sys.argv[1] + ".ss", "wb") as f:
             f.write(bytes(storage))
+
+        w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
+
+        with open("password.txt", "r") as f:
+            pwd = f.read().replace('\n', '')
+            w3.geth.personal.unlock_account(SENDER, pwd, 3600)
+            w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+
+        tx_hash = w3.eth.sendTransaction({'to': "0x0000000000000000000000000000000000000000", 'from': SENDER, 'value': 123, 'data': bytes(bytecode)})
 
         import ipdb; ipdb.set_trace()
 else:
