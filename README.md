@@ -82,3 +82,10 @@ Consistency between this number and what the thunk outputs is checked.
 Each instruction record is also checked that it generates only
 unsigned 8-bit integers.  The result is flattened into a list of
 unsigned numbers, which can be manipulated as the user wishes.
+
+
+# Private node 
+
+To run a private node, execute:
+`docker-compose up -d`
+
