@@ -43,7 +43,7 @@ def run_bytecode(code):
         gas_price=1,
         to=MOCK_ADDRESS,
         value=123,
-        data=bytes([54] + [0] * 31 + [210] + [0] * 31),
+        data = bytes([0] * 31 + [54] + [0] * 31 + [210]),
         code=code,
         sender=MOCK_ADDRESS,
     )
