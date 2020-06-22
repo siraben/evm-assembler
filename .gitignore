@@ -1,3 +1,5 @@
 out.dat
 demo/*.vm
 demo/*.mem
+demo/*.ss
+chaindata/*

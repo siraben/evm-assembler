@@ -1,0 +1,25 @@
+#!/bin/sh
+set -eux
+
+if [ -z ${WORKDIR+x} ]; then
+  WORKDIR=''; 
+fi
+
+if [ ! -d "${WORKDIR}chaindata/geth" ]; then
+  echo "No chaindata exists!";
+  echo "Initailizing ${WORKDIR}chaindata...";
+
+  # Init chaindata
+  rm -rf ${WORKDIR}chaindata/*
+  geth --datadir ${WORKDIR}chaindata init ${WORKDIR}genesis.json
+
+  # Copy key to chaindata
+  cp ${WORKDIR}keystore/* ${WORKDIR}chaindata/keystore/
+fi
+
+
+geth --datadir ${WORKDIR}chaindata \
+  --rpc --rpcapi="db,eth,net,web3,personal,web3,miner" --rpcaddr "0.0.0.0" --rpccorsdomain="*" \
+  --allow-insecure-unlock --mine --miner.threads=1 --rpcvhosts=* --cache 128 \
+  --ws --wsapi="db,eth,net,web3,personal,web3,miner" --wsaddr "0.0.0.0" --wsorigins="*" \
+  -unlock "0x0712fa982f9c9cCd74aA698eF03f5Bda837BC81f" --password ${WORKDIR}password.txt --ethash.dagdir ${WORKDIR}chaindata/dag
