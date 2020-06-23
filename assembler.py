@@ -213,7 +213,12 @@ def assemble_label(name):
         # It's possible to add a non-string label, but we don't want
         # people to start having tuples, lists etc. as labels.
         raise Exception("Cannot add non-string label: {}".format(name))
-    
+
+def assemble_org(new_pc):
+    global pc
+    pc = new_pc
+    return []
+
 def assemble_subroutine(name):
     if type(name) == str:
         add_subroutine(name, pc)
