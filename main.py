@@ -2,7 +2,7 @@ from eth import constants
 from eth.chains.mainnet import MainnetChain
 from eth.db.atomic import AtomicDB
 from eth_utils import to_wei, encode_hex
-from assembler import assemble_prog
+from assembler import assemble_prog, big_endian_rep
 from sexp import parse_sexp
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
@@ -98,15 +98,27 @@ if len(sys.argv) == 2:
         receipt = w3.eth.waitForTransactionReceipt(tx_hash)
         contract_address = receipt['contractAddress']
 
+        # tx_hash = w3.eth.sendTransaction(
+        #     {
+        #         'from': SENDER,
+        #         'to': contract_address,
+        #         'value': 0,
+        #         'data': bytes([0] * 31 + [57] + [0] * 31 + [210])
+        #     }
+        # )
+        # receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+
         tx_hash = w3.eth.sendTransaction(
             {
                 'from': SENDER,
                 'to': contract_address,
                 'value': 0,
-                'data': bytes([0] * 31 + [57] + [0] * 31 + [210])
+                'data': bytes(big_endian_rep((int("0xcdcd77c0", 16))) + [0] * 31 + [69] + [0] * 31 + [1])
+                # 'data': bytes([205, 205, 119, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1])
             }
         )
         receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+
 
         import ipdb; ipdb.set_trace()
 else:

@@ -11,7 +11,7 @@ stop
 (label contract-start)
 (org 0)
 0 calldataload
-28 rshift
+28 8 * rshift
 ;; 0xcdcd77c0
 3452794816 = (jumpi baz)
 stop
