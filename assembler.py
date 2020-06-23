@@ -217,7 +217,7 @@ def assemble_label(name):
 def assemble_org(new_pc):
     global pc
     pc = new_pc
-    return []
+    return make_inst(0, lambda _: [])
 
 def assemble_subroutine(name):
     if type(name) == str:
@@ -358,7 +358,7 @@ def assemble_expr(expr):
             elif expr[0] == "subroutine" and type(expr[1]) == str:
                 # expr == ["subroutine", string]
                 return assemble_subroutine(expr[1])
-            elif expr[0] == "org" and is_256_bit_imm(expr[1]):
+            elif expr[0] == "org" and type(expr[1]) == int:
                 # expr == ["org", uint256]
                 return assemble_org(expr[1])
             elif expr[0] == "push":
