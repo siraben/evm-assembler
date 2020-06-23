@@ -6,7 +6,6 @@ dup
 12
 0
 codecopy
-push1
 0
 return
 stop
