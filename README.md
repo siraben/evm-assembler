@@ -3,6 +3,17 @@
 ## Installation requirements
 - Virtualenv
 
+
+## Private node
+
+### Docker
+To run a private node, execute:
+`docker-compose up -d`
+
+### Natively
+`./nodestart`
+
+
 ## Files
 - `assembler.py` is the EVM assembler
 - `main.py` reads Lisp-style EVM assembly (see `demo` folder) from a
@@ -82,10 +93,4 @@ Consistency between this number and what the thunk outputs is checked.
 Each instruction record is also checked that it generates only
 unsigned 8-bit integers.  The result is flattened into a list of
 unsigned numbers, which can be manipulated as the user wishes.
-
-
-# Private node 
-
-To run a private node, execute:
-`docker-compose up -d`
 
