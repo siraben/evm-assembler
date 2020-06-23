@@ -64,15 +64,16 @@ def extract_stack(vm):
         )
     )
 
-def extract_storage(vm):
-    print(vm.state.get_storage(MOCK_ADDRESS, 54))
-    return [vm.state.get_storage(MOCK_ADDRESS, i) for i in range(0,10000)]
+def extract_storage(vm, address):
+    print(vm.state.get_storage(address, 54))
+    return [vm.state.get_storage(address, i) for i in range(0,10000)]
 
 if len(sys.argv) == 2:
     with open(sys.argv[1], "r") as f:
         bytecode = assemble_prog(parse_sexp(f.read()))
         vm2 = run_bytecode(bytes(bytecode))
-        storage = extract_storage(vm2)
+        storage = extract_storage(vm2, MOCK_ADDRESS)
+
         print(
             "Filename: {}\nContract size: {} bytes\nStack: {}\n".format(
                 sys.argv[1], len(bytecode), extract_stack(vm2)
@@ -81,12 +82,10 @@ if len(sys.argv) == 2:
         with open(sys.argv[1] + ".mem", "wb") as f:
             f.write(bytes(vm2.memory_read(0, 10000)))
             f.flush()
-            
+
         with open(sys.argv[1] + ".vm", "wb") as f:
             f.write(bytes(bytecode))
 
-        with open(sys.argv[1] + ".ss", "wb") as f:
-            f.write(bytes(storage))
 
         # Stuff to connect to a local node
         w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
@@ -97,8 +96,17 @@ if len(sys.argv) == 2:
 
         tx_hash = w3.eth.sendTransaction({'from': SENDER, 'value': 0, 'data': bytes(bytecode)})
         receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-        # Address of the deployed contract:
-        # receipt['contractAddress']
+        contract_address = receipt['contractAddress']
+
+        tx_hash = w3.eth.sendTransaction(
+            {
+                'from': SENDER,
+                'to': contract_address,
+                'value': 0,
+                'data': bytes([0] * 31 + [57] + [0] * 31 + [210])
+            }
+        )
+        receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 
         import ipdb; ipdb.set_trace()
 else:

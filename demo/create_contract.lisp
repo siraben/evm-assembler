@@ -3,12 +3,16 @@
 ;; CALLDATALOAD PUSH1 0 CALLDATALOAD SSTORE
 19
 dup
-12
+contract-start
+1 + ;; HACK: adjust the address
 0
 codecopy
 0
 return
 stop
+;; Contract starts
+(label contract-start)
+(org 0)
 0
 calldataload
 sload
