@@ -17,7 +17,10 @@ stop
 stop
 (label baz)
 4 calldataload  ;; Load x : u32
+dup 0 !
 0 sstore
 36 calldataload ;; Load y : bool
+dup 32 !
 1 sstore
-stop
+63 32 return ;; Return the bool param back
+;; stop

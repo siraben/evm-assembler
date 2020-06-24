@@ -94,6 +94,7 @@ if len(sys.argv) == 2:
             w3.geth.personal.unlock_account(SENDER, pwd, 3600)
             w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
+
         tx_hash = w3.eth.sendTransaction({'from': SENDER, 'value': 0, 'data': bytes(bytecode)})
         receipt = w3.eth.waitForTransactionReceipt(tx_hash)
         contract_address = receipt['contractAddress']
@@ -108,16 +109,38 @@ if len(sys.argv) == 2:
         # )
         # receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 
-        tx_hash = w3.eth.sendTransaction(
+        abi = [
             {
-                'from': SENDER,
-                'to': contract_address,
-                'value': 0,
-                'data': bytes(big_endian_rep((int("0xcdcd77c0", 16))) + [0] * 31 + [69] + [0] * 31 + [1])
-                # 'data': bytes([205, 205, 119, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1])
+                "name": "baz",
+                "type": "function",
+                "inputs": [
+                    {
+                        "name": "x",
+                        "type": "uint32"
+                    },
+                    {
+                        "name": "y",
+                        "type": "bool"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "r",
+                        "type": "bool"
+                    }
+                ]
             }
+        ]
+
+        contract = w3.eth.contract(
+            abi=abi,
+            bytecode=w3.eth.getCode(contract_address),
+            address=contract_address
         )
-        receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+
+        # tx_hash = contract.functions.baz(44, True).transact({'from': SENDER})
+        # receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+        print(contract.functions.baz(44, True).call())
 
 
         import ipdb; ipdb.set_trace()
