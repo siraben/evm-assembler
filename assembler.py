@@ -186,6 +186,7 @@ def add_label(name, val):
         labels[name] = val
         return []
 
+
 def add_subroutine(name, val):
     global subroutines
     if name in subroutines:
@@ -196,10 +197,11 @@ def add_subroutine(name, val):
         subroutines[name] = val
         return []
 
+
 def resolve_label(n):
     global labels
     if is_256_bit_imm(n):
-        return label_or_imm256
+        return n
     if n in labels:
         return labels[n]
     raise Exception("Label not found: {}".format(n))
@@ -214,10 +216,12 @@ def assemble_label(name):
         # people to start having tuples, lists etc. as labels.
         raise Exception("Cannot add non-string label: {}".format(name))
 
+
 def assemble_org(new_pc):
     global pc
     pc = new_pc
     return make_inst(0, lambda _: [])
+
 
 def assemble_subroutine(name):
     if type(name) == str:
@@ -227,7 +231,9 @@ def assemble_subroutine(name):
     else:
         # It's possible to add a non-string label, but we don't want
         # people to start having tuples, lists etc. as labels.
-        raise Exception("Cannot add non-string name for subroutine: {}".format(name))
+        raise Exception(
+            "Cannot add non-string name for subroutine: {}".format(name)
+        )
 
 
 def reset_labels():
@@ -292,9 +298,10 @@ def assemble_push_then(arg, after):
             lambda _: (
                 [0x5F + 2]
                 + (
-                    (lambda push_arg: ([0] if 1 == len(push_arg) else []) + push_arg)(
-                        big_endian_rep(resolve_label(arg))
-                    )
+                    (
+                        lambda push_arg: ([0] if 1 == len(push_arg) else [])
+                        + push_arg
+                    )(big_endian_rep(resolve_label(arg)))
                 )
                 + after
             ),
@@ -310,9 +317,10 @@ def assemble_call(arg):
             lambda _: (
                 [0x5F + 2]
                 + (
-                    (lambda push_arg: ([0] if 1 == len(push_arg) else []) + push_arg)(
-                        big_endian_rep(resolve_label(arg))
-                    )
+                    (
+                        lambda push_arg: ([0] if 1 == len(push_arg) else [])
+                        + push_arg
+                    )(big_endian_rep(resolve_label(arg)))
                 )
                 + [
                     *simple_ops["push1"],
@@ -343,7 +351,7 @@ def assemble_expr(expr):
         elif expr in labels:
             return assemble_push_then(expr, [])
         else:
-        # Otherwise, expr's value as a label be resolved at pass 2.
+            # Otherwise, expr's value as a label be resolved at pass 2.
             return assemble_push_then(expr, [])
     elif type(expr) == list:
         # expr == [??]
@@ -370,18 +378,16 @@ def assemble_expr(expr):
             elif expr[0] == "jumpi" and type(expr[1]) == str:
                 # expr == ["jumpi", ???]
                 return assemble_push_then(expr[1], [0x57])
-            elif expr[0] == "db" and type(expr[1]) == list:
-                # expr == ["db", [???]]
-                return assemble_dw(expr[1])
-            elif expr[0] == "dw" and type(expr[1]) == list:
-                # expr == ["dw", [???]]
-                return assemble_dw(expr[1])
             elif expr[0] == "call" and type(expr[1]) == str:
                 # expr == ["call", ???]
                 return assemble_call(expr[1])
         elif len(expr) == 3:
             # expr == [string, "equ", uint256]
-            if expr[1] == "equ" and type(expr[0]) == str and is_256_bit_imm(expr[2]):
+            if (
+                expr[1] == "equ"
+                and type(expr[0]) == str
+                and is_256_bit_imm(expr[2])
+            ):
                 return make_inst(0, lambda _: add_label(expr[0], expr[2]))
     else:
         raise Exception("Unknown expression: {}".format(expr))
@@ -437,7 +443,9 @@ def pass2(insts):
                 res.append(temp)
         else:
             raise Exception(
-                "Pass 2: not an instruction record: {}. PC: {}.".format(inst, hex(pc))
+                "Pass 2: not an instruction record: {}. PC: {}.".format(
+                    inst, hex(pc)
+                )
             )
     return res
 
@@ -455,7 +463,7 @@ def assemble_prog(prog):
     return flatten(pass2(pass1(prog)))
 
 
-## Custom opcodes
+# Custom opcodes
 
 # Location of return stack
 return_stack_loc = 0
@@ -469,7 +477,15 @@ forth_words += [
     # Pushing to the return stack
     (
         "pushr",
-        [return_stack_loc, "mload", 16, "shl", "add", return_stack_loc, "mstore"],
+        [
+            return_stack_loc,
+            "mload",
+            16,
+            "shl",
+            "add",
+            return_stack_loc,
+            "mstore",
+        ],
     ),
     # Popping from the return stack
     (
@@ -541,7 +557,23 @@ forth_words += [
     ("+c!", ["dup", "c@", "dup3", "+", "swap", "c!", "drop"]),
     ("-c!", ["dup", "c@", "dup3", "-", "swap", "c!", "drop"]),
     ("d@", ["mload", 240, "shr"]),
-    ("d!", ["dup2", 8, "shr", "dup2", "c!", 1, "+", "swap", 255, "and", "swap", "c!"]),
+    (
+        "d!",
+        [
+            "dup2",
+            8,
+            "shr",
+            "dup2",
+            "c!",
+            1,
+            "+",
+            "swap",
+            255,
+            "and",
+            "swap",
+            "c!",
+        ],
+    ),
     ("+d!", ["dup", "d@", "dup3", "+", "swap", "d!", "drop"]),
     ("-d!", ["dup", "d@", "dup3", "-", "swap", "d!", "drop"]),
     ("s@", ["sload"]),
