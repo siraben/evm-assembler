@@ -26,6 +26,7 @@ To run a private node, execute:
   - `hello.lisp` writes 'hello, world!' to memory
   - `fibonacci.lisp` computes fibonacci
   - `sum_of_squares.lisp` computes the sum of squares
+  - `ski.lisp` graph reduction machine for λ-calculus
 
 ## Usage
 1. Run `source setup.sh` to download the appropriate Virtualenv
