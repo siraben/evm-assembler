@@ -1,5 +1,0 @@
-eth-utils
-py-evm
-ipdb
-web3
-pycryptodome

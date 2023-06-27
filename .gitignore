@@ -1,6 +1,2 @@
-out.dat
-demo/*.vm
-demo/*.mem
-demo/*.ss
-chaindata/*
-__pycache__/*
+.DS_Store
+__pycache__

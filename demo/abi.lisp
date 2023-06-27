@@ -22,5 +22,7 @@ dup 0 !
 36 calldataload ;; Load y : bool
 dup 32 !
 1 sstore
+;; 3452794816 32 32 log1
 63 32 return ;; Return the bool param back
+
 ;; stop
