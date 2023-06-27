@@ -27,9 +27,9 @@ Here's an example of how to use it:
 $ python main.py demo/factorial.lisp
 ```
 
-The output of this command will be a new file named
-`demo/factorial.lisp.vm`, which contains the bytecode of the assembled
-program.
+The output of this command will be a new file named `factorial.bin` in
+your current directory, which contains the hexadecimal representation
+of the assembled program.
 
 Please note that the previous functionalities related to running a
 private node, or reporting the stack, contract code and memory at the
