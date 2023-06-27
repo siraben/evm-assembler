@@ -1,59 +1,44 @@
-# Assembler for the EVM
+# EVM Assembler in Python
 
-## Installation requirements
-- Virtualenv
+This project provides an assembler for the Ethereum Virtual Machine
+(EVM), written purely in Python without any dependencies.
 
+## Files and Directories
 
-## Private node
-
-### Docker
-To run a private node, execute:
-`docker-compose up -d`
-
-### Natively
-`./nodestart`
-
-
-## Files
-- `assembler.py` is the EVM assembler
-- `main.py` reads Lisp-style EVM assembly (see `demo` folder) from a
-  file and returns with stack information.  The memory is stored
-  `f.mem` where `f` is the name of the file passed to it.
-- `run.sh` accepts a filename as an argument, assembles the file and
-  runs it, reporting the stack, contract code and memory at the end.
-- `demo/` - demo folder
-  - `factorial.lisp` computes factorial
-  - `hello.lisp` writes 'hello, world!' to memory
-  - `fibonacci.lisp` computes fibonacci
-  - `sum_of_squares.lisp` computes the sum of squares
-  - `ski.lisp` graph reduction machine for λ-calculus
+- `assembler.py`: The core EVM assembler script.
+- `main.py`: This script reads Lisp-style EVM assembly from a file
+  (see `examples` folder for examples), assembles it into bytecode, and
+  writes the bytecode to a new file.
+- `examples/`: This directory contains a set of examples that you can
+  use to test the assembler.
+  - `factorial.lisp`: Computes factorial.
+  - `hello.lisp`: Writes 'Hello, world!' to memory.
+  - `fibonacci.lisp`: Computes fibonacci numbers.
+  - `sum_of_squares.lisp`: Computes the sum of squares.
+  - `ski.lisp`: A graph reduction machine for λ-calculus.
 
 ## Usage
-1. Run `source setup.sh` to download the appropriate Virtualenv
-   dependencies.
-2. Use `run.sh` like so:
+Use the `main.py` script to assemble and write bytecode. It accepts
+the filename of the source file as a command-line argument.
 
-```text
-$ ./run.sh demo/factorial.lisp 
-Filename: factorial.lisp
-Contract size: 104 bytes
-Stack: [20922789888000]
+Here's an example of how to use it:
 
-Contract code
-
-00000000: 6010 6100 1960 1058 0160 0051 6010 6002  `.a..`.X.`.Q`.`.
-00000010: 0a02 0160 0052 565b 005b 8015 6100 5057  ...`.RV[.[..a.PW
-00000020: 8060 0190 0361 0019 6010 5801 6000 5160  .`...a..`.X.`.Q`
-00000030: 1060 020a 0201 6000 5256 5b02 6000 5180  .`....`.RV[.`.Q.
-00000040: 61ff ff16 9060 1060 020a 9004 6000 5256  a....`.`....`.RV
-00000050: 5b50 6001 6000 5180 61ff ff16 9060 1060  [P`.`.Q.a....`.`
-00000060: 020a 9004 6000 5256                      ....`.RV
-
-Memory
-
-00000000: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000010: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+```sh
+$ python main.py demo/factorial.lisp
 ```
+
+The output of this command will be a new file named
+`demo/factorial.lisp.vm`, which contains the bytecode of the assembled
+program.
+
+Please note that the previous functionalities related to running a
+private node, or reporting the stack, contract code and memory at the
+end, have been removed in the latest version of the project. The
+primary focus now is to provide a lightweight, dependency-free EVM
+assembler.
+
+## License
+This project is licensed under the MIT license.
 
 ## Assembler documentation
 ### Pass 1
