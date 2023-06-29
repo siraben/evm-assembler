@@ -1,6 +1,6 @@
 ;; Program to do a quadratic number of operations on the stack.
 
-1019 0
+1020 0
 
 (label main)
 over

@@ -15,7 +15,7 @@ mem-start write-ptr !
 
 (label write-loop)
 inc-n
-n @ 500 >
+n @ 3000 >
 
 (jumpi write-done)
 
@@ -26,6 +26,7 @@ n @ ,
 (jump write-loop)
 
 (label write-done)
+860 64 return
 stop
 
 (label inc-n) n @ 1 + n ! ret
